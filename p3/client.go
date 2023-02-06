@@ -20,15 +20,15 @@ type P3 struct {
 	http            *http.Client
 }
 
-func NewP3() *P3 {
-	return NewP3With(
+func New() *P3 {
+	return NewWith(
 		"http://p3.photon.storage:13000",
 		os.Getenv("P3_ACCESS_KEY_ID"),
 		os.Getenv("P3_ACCESS_KEY_SECRET"),
 	)
 }
 
-func NewP3With(
+func NewWith(
 	endpoint string,
 	accessKeyID string,
 	accessKeySecret string,
