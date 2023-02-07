@@ -64,7 +64,7 @@ func (p *P3) PutObject(
 	h := md5.Sum(data)
 	r.Header.Set("x-p3-content-md5", hex.EncodeToString(h[:]))
 	r.Header.Set("x-p3-unixtime", fmt.Sprintf("%v", time.Now().Unix()))
-	addAuthHeader(r, bucket, key, p.accessKeyID, p.accessKeySecret)
+	AddAuthHeader(r, bucket, key, p.accessKeyID, p.accessKeySecret)
 
 	resp, err := p.http.Do(r)
 	if err != nil {
@@ -104,7 +104,7 @@ func (p *P3) GetObject(
 
 	r.Header.Set("x-p3-bucket", bucket)
 	r.Header.Set("x-p3-unixtime", fmt.Sprintf("%v", time.Now().Unix()))
-	addAuthHeader(r, bucket, key, p.accessKeyID, p.accessKeySecret)
+	AddAuthHeader(r, bucket, key, p.accessKeyID, p.accessKeySecret)
 
 	resp, err := p.http.Do(r)
 	if err != nil {
@@ -129,7 +129,7 @@ func (p *P3) GetObjectByCID(cid string) ([]byte, error) {
 	}
 
 	r.Header.Set("x-p3-unixtime", fmt.Sprintf("%v", time.Now().Unix()))
-	addAuthHeader(r, "", cid, p.accessKeyID, p.accessKeySecret)
+	AddAuthHeader(r, "", cid, p.accessKeyID, p.accessKeySecret)
 
 	resp, err := p.http.Do(r)
 	if err != nil {
