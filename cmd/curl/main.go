@@ -75,9 +75,10 @@ func main() {
 		fmt.Printf("Generated curl cmd:\n")
 		fmt.Printf(
 			"curl -X GET http://p3.photon.storage:13000/gateway/v1/%v"+
-				" %v",
+				" %v -o %v",
 			*keyf,
 			strings.Join(headers, " "),
+			*dataf,
 		)
 
 	case "PUT":
