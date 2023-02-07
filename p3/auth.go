@@ -107,7 +107,7 @@ func sign(r *http.Request, bucket, key string, sk []byte) ([]byte, error) {
 	return h.Sum(nil), nil
 }
 
-func addAuthHeader(
+func AddAuthHeader(
 	r *http.Request,
 	bucket string,
 	key string,
