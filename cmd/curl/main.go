@@ -15,6 +15,10 @@ import (
 	"github.com/photon-storage/p3-sdk-go/p3"
 )
 
+// Example usage:
+// Set env vars P3_ACCESS_KEY_ID and P3_ACCESS_KEY_SECRET
+// go run cmd/auth/main.go -method=PUT -bucket="bucket-name" -key="key-name"  -data=[data-file-path]
+// go run cmd/curl/main.go -method=GET -bucket="bucket-name" -key="key-name"
 func main() {
 	methodf := flag.String("method", "", "PUT or GET")
 	bucketf := flag.String("bucket", "", "bucket name")
