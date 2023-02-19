@@ -22,7 +22,7 @@ type P3 struct {
 
 func New() *P3 {
 	return NewWith(
-		"http://p3.photon.storage:13000",
+		"http://api.p3.photon.storage:13000",
 		os.Getenv("P3_ACCESS_KEY_ID"),
 		os.Getenv("P3_ACCESS_KEY_SECRET"),
 	)
