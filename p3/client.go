@@ -142,3 +142,56 @@ func (p *P3) GetObjectByCID(cid string) ([]byte, error) {
 
 	return ioutil.ReadAll(resp.Body)
 }
+
+func (p *P3) DeleteObject(bucket string, key string) error {
+	r, err := http.NewRequest(
+		http.MethodDelete,
+		fmt.Sprintf("%v/%v/%v", p.endpoint, p.group, key),
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+
+	r.Header.Set("x-p3-bucket", bucket)
+	r.Header.Set("x-p3-unixtime", fmt.Sprintf("%v", time.Now().Unix()))
+	AddAuthHeader(r, bucket, key, p.accessKeyID, p.accessKeySecret)
+	resp, err := p.http.Do(r)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("request error with code: %v", resp.StatusCode)
+	}
+
+	return nil
+}
+
+func (p *P3) DeleteObjectByCID(cid string) error {
+	r, err := http.NewRequest(
+		http.MethodDelete,
+		fmt.Sprintf("%v/%v/%v?is_cid=1", p.endpoint, p.group, cid),
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+
+	r.Header.Set(
+		"x-p3-unixtime",
+		fmt.Sprintf("%v", time.Now().Unix()),
+	)
+	AddAuthHeader(r, "", cid, p.accessKeyID, p.accessKeySecret)
+
+	resp, err := p.http.Do(r)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("request error with code: %v", resp.StatusCode)
+	}
+
+	return nil
+}
