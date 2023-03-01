@@ -17,10 +17,11 @@ import (
 
 // Example usage:
 // Set env vars P3_ACCESS_KEY_ID and P3_ACCESS_KEY_SECRET
-// go run cmd/auth/main.go -method=PUT -bucket="bucket-name" -key="key-name"  -data=[data-file-path]
+// go run cmd/curl/main.go -method=PUT -bucket="bucket-name" -key="key-name"  -data=[data-file-path]
 // go run cmd/curl/main.go -method=GET -bucket="bucket-name" -key="key-name"
+// go run cmd/curl/main.go -method=DELETE -bucket="bucket-name" -key="key-name"
 func main() {
-	methodf := flag.String("method", "", "PUT or GET")
+	methodf := flag.String("method", "", "PUT GET or DELETE")
 	bucketf := flag.String("bucket", "", "bucket name")
 	keyf := flag.String("key", "", "key name")
 	dataf := flag.String("data", "", "file path to data file")
@@ -44,7 +45,7 @@ func main() {
 	}
 
 	switch *methodf {
-	case "GET":
+	case http.MethodGet:
 		r, err := http.NewRequest(
 			http.MethodGet,
 			"",
@@ -81,7 +82,7 @@ func main() {
 			*dataf,
 		)
 
-	case "PUT":
+	case http.MethodPut:
 		data, err := ioutil.ReadFile(*dataf)
 		if err != nil {
 			fmt.Printf("Error reading file %v: %v\n", *dataf, err)
@@ -126,6 +127,48 @@ func main() {
 				" %v",
 			*keyf,
 			*dataf,
+			strings.Join(headers, " "),
+		)
+
+	case http.MethodDelete:
+		r, err := http.NewRequest(
+			http.MethodDelete,
+			"",
+			nil,
+		)
+		if err != nil {
+			fmt.Printf("Error building curl request: %v\n", err)
+			return
+		}
+
+		r.Header.Set("x-p3-bucket", *bucketf)
+		r.Header.Set(
+			"x-p3-unixtime",
+			fmt.Sprintf("%v", time.Now().Unix()),
+		)
+		p3.AddAuthHeader(
+			r,
+			*bucketf,
+			*keyf,
+			*accessKeyIDf,
+			[]byte(*accessKeySecretf),
+		)
+
+		var headers []string
+		for h, vals := range r.Header {
+			for _, val := range vals {
+				headers = append(
+					headers,
+					fmt.Sprintf("-H \"%v: %v\"", h, val),
+				)
+			}
+		}
+
+		fmt.Printf("Generated curl cmd:\n")
+		fmt.Printf(
+			"curl -X DELETE http://p3.photon.storage:13000/gateway/v1/%v"+
+				" %v",
+			*keyf,
 			strings.Join(headers, " "),
 		)
 
